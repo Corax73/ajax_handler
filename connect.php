@@ -1,0 +1,19 @@
+<?php
+
+function connect(string $path): PDO
+{
+    static $pdo;
+
+    if (!$pdo) {
+        if (file_exists($path)) {
+            $config = require_once $path;
+        } else {
+            $msg = 'Создайте и настройте config.php';
+            trigger_error($msg, E_USER_ERROR);
+        }
+        $dsn = 'mysql:dbname=' . $config['db_name'] . ';host=' . $config['db_host'];
+        $pdo = new PDO($dsn, $config['db_user'], $config['db_pass']);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+    return $pdo;
+}
